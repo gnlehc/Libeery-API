@@ -22,7 +22,7 @@ func DatabaseConnection() (err error) {
 	dbUsername := "admin"
 	dbDatabase := "Libeery-DB"
 	dbPassword := "secret"
-	dbPort := "5444"
+	dbPort := "5433"
 
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		dbUsername,

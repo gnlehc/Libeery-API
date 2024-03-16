@@ -34,13 +34,12 @@ SELECT * FROM MsStaff;
 
 CREATE TABLE MsUser(
     "UserID" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    -- aggregation
     "NIM" CHAR(10),
     "NIS" CHAR(5),
     "CreatedAt" TIMESTAMP,
     "UpdatedAt" TIMESTAMP,
     "Stsrc" CHAR(1),
-    CONSTRAINT fk_mahasiswa FOREIGN KEY ("NIM") REFERENCES MsMahasiswa("NIM"),
-    CONSTRAINT fk_staff FOREIGN KEY ("NIS") REFERENCES MsStaff("NIS")
 );
 
 -- Inserting all data from MsMahasiswa into MsUser
