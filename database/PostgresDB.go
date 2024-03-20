@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -12,22 +13,21 @@ import (
 var GlobalDB *gorm.DB
 
 func DatabaseConnection() (err error) {
-	errr := godotenv.Load()
-	if errr != nil {
-		return errr
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
 	}
-	// env ada di terminal linux
-	// dbUsername := os.Getenv("DB_USERNAME")
-	// dbPassword := os.Getenv("DB_PASSWORD")
-	// dbHost := os.Getenv("DB_HOST")
-	// dbPort := os.Getenv("DB_PORT")
-	// dbDatabase := os.Getenv("DB_DATABASE")
-	// ambil credential dari docker-compose
-	dbHost := "localhost"
-	dbUsername := "admin"
-	dbDatabase := "Libeery-DB"
-	dbPassword := "secret"
-	dbPort := "5433"
+	// env live railway
+	dbUsername := os.Getenv("DB_USERNAME")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbDatabase := os.Getenv("DB_DATABASE")
+
+	fmt.Println(dbUsername)
+	fmt.Println(dbDatabase)
+	fmt.Println(dbHost)
+	fmt.Println(dbPort)
+	fmt.Println(dbPassword)
 
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		dbUsername,
