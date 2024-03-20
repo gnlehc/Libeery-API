@@ -5,6 +5,7 @@ import (
 	"Libeery/model"
 	"Libeery/service"
 	"log"
+	"os"
 )
 
 func main() {
@@ -14,6 +15,11 @@ func main() {
 		log.Fatalln("Could not connect to database", err)
 	}
 	database.GlobalDB.AutoMigrate(&model.MsMahasiswa{})
-	r := service.Router()
-	r.Run(":8080")
+	r := service.SetupRouter()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	r.Run(":" + port)
 }
