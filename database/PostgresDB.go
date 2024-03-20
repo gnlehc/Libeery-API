@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -11,6 +12,10 @@ import (
 var GlobalDB *gorm.DB
 
 func DatabaseConnection() (err error) {
+	errr := godotenv.Load()
+	if errr != nil {
+		return errr
+	}
 	// env ada di terminal linux
 	// dbUsername := os.Getenv("DB_USERNAME")
 	// dbPassword := os.Getenv("DB_PASSWORD")
