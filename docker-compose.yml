@@ -1,5 +1,4 @@
-version: "3.8"
-
+version: "3.9"
 services:
   database:
     container_name: Libeery-DB
@@ -10,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=Libeery-DB
     ports:
-      - 5444:5432
+      - "5433:5432"
     volumes:
       - db:/var/lib/postgresql/data 
 

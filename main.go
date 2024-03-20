@@ -15,5 +15,5 @@ func main() {
 	}
 	database.GlobalDB.AutoMigrate(&model.MsMahasiswa{})
 	r := service.Router()
-	r.Run(":9999")
+	r.Run(":8080")
 }
