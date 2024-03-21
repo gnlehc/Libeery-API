@@ -54,6 +54,58 @@ FROM MsStaff;
 
 SELECT * FROM MsUser;
 
+CREATE TABLE MsBookingStatus(
+    BookingStatusID INT PRIMARY KEY,
+    StatusTitle VARCHAR(255),
+    Stsrc CHAR(1)
+);
+
+INSERT INTO MsBookingStatus (BookingStatusID, StatusTitle, Stsrc) VALUES (1, "Pending", "A");
+INSERT INTO MsBookingStatus (BookingStatusID, StatusTitle, Stsrc) VALUES (2, "Checked-In", "A");
+INSERT INTO MsBookingStatus (BookingStatusID, StatusTitle, Stsrc) VALUES (3, "Checked-Out", "A");
+
+CREATE TABLE MsLoker(
+    LockerID INT PRIMARY KEY,
+    RowNumber INT,
+    ColumnNumber INT
+);
+
+-- INSERT INTO MsLoker()
+
+CREATE TABLE TrBooking(
+    BookingID UUID PRIMARY KEY,
+    UserID INT,
+    BookingStatusID INT,
+    LokerID INT,
+    StartSession TIME,
+    EndSession TIME,
+    CheckInTime TIME, 
+    CheckOutTime TIME, 
+    CreatedAt TIME,
+    UpdatedAt TIME,
+    Stsrc CHAR(1),
+    FOREIGN KEY (UserID) REFERENCES MsUser(UserID), 
+    FOREIGN KEY (BookingStatusID) REFERENCES MsBookingStatus(BookingStatusID),
+    FOREIGN KEY (LokerID) REFERENCES MsLoker(LockerID)
+);
+
+CREATE TABLE MsForLaterSession(
+    SessionID INT PRIMARY KEY,
+    StartSession TIME,
+    EndSession TIME
+);
+
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (1, '08:00:00', '09:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (2, '09:00:00', '10:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (3, '10:00:00', '11:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (4, '11:00:00', '12:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (5, '12:00:00', '13:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (6, '13:00:00', '14:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (7, '14:00:00', '15:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (8, '15:00:00', '16:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (9, '16:00:00', '17:00:00');
+INSERT INTO MsForLaterSession (SessionID, StartSession, EndSession) VALUES (10, '17:00:00', '18:00:00');
+
 DROP TABLE MsMahasiswa;
 DROP TABLE MsStaff;
 DROP TABLE MsUser;

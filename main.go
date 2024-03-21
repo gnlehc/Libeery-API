@@ -2,19 +2,24 @@ package main
 
 import (
 	"Libeery/database"
-	"Libeery/model"
+	"Libeery/database/migrate"
 	"Libeery/service"
 	"log"
 	"os"
 )
 
 func main() {
+	// Establish database connection
 	err := database.DatabaseConnection()
-
 	if err != nil {
-		log.Fatalln("Could not connect to database", err)
+		log.Fatalln("Could not connect to database:", err)
 	}
-	database.GlobalDB.AutoMigrate(&model.MsMahasiswa{})
+
+	// Migrate database tables
+	err = migrate.DatabaseMigration(database.GlobalDB)
+	if err != nil {
+		log.Fatalln("Failed to migrate database tables:", err)
+	}
 	r := service.SetupRouter()
 	port := os.Getenv("PORT")
 	if port == "" {
