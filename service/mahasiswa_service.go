@@ -1,26 +1,13 @@
 package service
 
 import (
-	"net/http"
+	"Libeery/helper"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"Message": "Welcome To Libeery",
-		})
-	})
-
-	api := r.Group("/api")
-	{
-		public := api.Group("/public")
-		{
-			public.POST("/login")
-			public.POST("/register")
-		}
-	}
-	return r
+func MhsSetupRoutes(public *gin.RouterGroup) {
+	public.POST("/loginmhs",
+		helper.LoginMhs,
+	)
 }
