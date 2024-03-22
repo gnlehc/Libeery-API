@@ -9,9 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func LoginMhs(c *gin.Context) {
-	var req model.MhsLoginRequestDTO
-	var mhs model.MsMahasiswa
+func LoginStaff(c *gin.Context) {
+	var req model.StaffLoginRequestDTO
+	var staff model.MsStaff
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		res := output.BaseOutput{StatusCode: 400, Message: "Invalid request"}
@@ -19,19 +19,19 @@ func LoginMhs(c *gin.Context) {
 		return
 	}
 
-	if err := database.GlobalDB.Where("NIM = ?", req.NIM).First(&mhs).Error; err != nil {
-		res := output.BaseOutput{StatusCode: 401, Message: "NIM not found"}
+	if err := database.GlobalDB.Where("nis = ?", req.NIS).First(&staff).Error; err != nil {
+		res := output.BaseOutput{StatusCode: 401, Message: "NIS not found"}
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	if err := database.GlobalDB.Where("NIM = ? AND Mhs_Password = ?", req.NIM, req.Password).First(&mhs).Error; err != nil {
+	if err := database.GlobalDB.Where("nis = ? AND staff_password = ?", req.NIS, req.Password).First(&staff).Error; err != nil {
 		res := output.BaseOutput{StatusCode: 401, Message: "Password not matched!"}
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	if err := database.GlobalDB.Model(&mhs).Update("Stsrc", "A").Error; err != nil {
+	if err := database.GlobalDB.Model(&staff).Update("Stsrc", "A").Error; err != nil {
 		res := output.BaseOutput{StatusCode: 500, Message: "Failed to update Stsrc attribute"}
 		c.JSON(http.StatusInternalServerError, res)
 		return

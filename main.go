@@ -6,6 +6,8 @@ import (
 	"Libeery/service"
 	"log"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -20,7 +22,10 @@ func main() {
 	if err != nil {
 		log.Fatalln("Failed to migrate database tables:", err)
 	}
-	r := service.SetupRouter()
+	r := gin.Default()
+
+	service.SetupRoutes(r)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
