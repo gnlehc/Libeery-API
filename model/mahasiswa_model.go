@@ -15,7 +15,6 @@ type MhsLoginRequestDTO struct {
 type MhsLoginResponse struct {
 	// Token        string `json:"token"`
 	// RefreshToken string `json:"refreshtoken"`
-	StatusCode string      `json:"statuscode"`
-	Message    string      `json:"message"`
-	Mhs        MsMahasiswa `json:"mhs"`
+	StatusCode string `json:"statuscode"`
+	Message    string `json:"message"`
 }
