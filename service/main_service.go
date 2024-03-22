@@ -1,6 +1,11 @@
+// service package
 package service
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 func SetupRoutes(router *gin.Engine) {
 	api := router.Group("/api")
@@ -11,4 +16,10 @@ func SetupRoutes(router *gin.Engine) {
 			StaffSetupRoutes(public)
 		}
 	}
+
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Welcome to the Libeery API!",
+		})
+	})
 }
