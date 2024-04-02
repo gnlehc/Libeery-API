@@ -6,12 +6,13 @@ import (
 	"errors"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 // Function to make a booking
-func MakeBooking(req model.BookingRequestDTO) error {
+func MakeBooking(c *gin.Context, req model.BookingRequestDTO) error {
 	db := database.GlobalDB
 
 	// Check if the user already has a booking for the same session

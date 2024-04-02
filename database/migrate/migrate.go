@@ -47,8 +47,8 @@ func DatabaseMigration(db *gorm.DB) error {
 		}
 	}
 
-	if !migrator.HasTable(&model.ForLaterSession{}) {
-		if err := db.AutoMigrate(&model.ForLaterSession{}); err != nil {
+	if !migrator.HasTable(&model.MsSession{}) {
+		if err := db.AutoMigrate(&model.MsSession{}); err != nil {
 			return err
 		}
 	}
@@ -66,7 +66,7 @@ func DatabaseMigration(db *gorm.DB) error {
 		return err
 	}
 
-	if err := seedDefaultForLaterSessions(db); err != nil {
+	if err := seedDefaultMsSession(db); err != nil {
 		return err
 	}
 
@@ -140,14 +140,14 @@ func seedDefaultBookingStatusData(db *gorm.DB) error {
 	return nil
 }
 
-// Seed default ForLaterSession
-func seedDefaultForLaterSessions(db *gorm.DB) error {
+// Seed default MsSession
+func seedDefaultMsSession(db *gorm.DB) error {
 	var count int64
-	if err := db.Model(&model.ForLaterSession{}).Count(&count).Error; err != nil {
+	if err := db.Model(&model.MsSession{}).Count(&count).Error; err != nil {
 		return err
 	}
 	if count <= 0 {
-		defaultForLaterSessions := []model.ForLaterSession{
+		defaultMsSession := []model.MsSession{
 			{SessionID: 1, StartSession: parseTime("08:00:00"), EndSession: parseTime("09:00:00")},
 			{SessionID: 2, StartSession: parseTime("09:00:00"), EndSession: parseTime("10:00:00")},
 			{SessionID: 3, StartSession: parseTime("10:00:00"), EndSession: parseTime("11:00:00")},
@@ -159,7 +159,7 @@ func seedDefaultForLaterSessions(db *gorm.DB) error {
 			{SessionID: 9, StartSession: parseTime("16:00:00"), EndSession: parseTime("17:00:00")},
 			{SessionID: 10, StartSession: parseTime("17:00:00"), EndSession: parseTime("18:00:00")},
 		}
-		for _, session := range defaultForLaterSessions {
+		for _, session := range defaultMsSession {
 			if err := db.Create(&session).Error; err != nil {
 				return err
 			}
