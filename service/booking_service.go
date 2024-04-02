@@ -27,5 +27,5 @@ func BookASessionHandler(c *gin.Context) {
 }
 
 func BookingRoutes(public *gin.RouterGroup) {
-	public.POST("/book_a_session", BookASessionHandler)
+	public.POST("/bookSession", BookASessionHandler)
 }

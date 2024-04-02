@@ -14,6 +14,7 @@ func SetupRoutes(router *gin.Engine) {
 		{
 			MhsRoutes(public)
 			StaffRoutes(public)
+			BookingRoutes(public)
 		}
 	}
 

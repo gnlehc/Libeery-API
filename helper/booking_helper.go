@@ -12,7 +12,14 @@ import (
 )
 
 // Function to make a booking
-func MakeBooking(c *gin.Context, req model.BookingRequestDTO) error {
+func MakeBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
+	// Mapping the fields from the request body struct to the BookingRequestDTO struct
+	req := model.BookingRequestDTO{
+		UserID:    reqBody.UserID,
+		SessionID: reqBody.SessionID,
+		LokerID:   reqBody.LokerID,
+	}
+
 	db := database.GlobalDB
 
 	// Check if the user already has a booking for the same session
@@ -30,7 +37,7 @@ func MakeBooking(c *gin.Context, req model.BookingRequestDTO) error {
 	}()
 
 	// Update locker availability
-	err := updateLockerAvailability(tx, req.LokerID, req.SessionID, false)
+	err := updateLockerAvailability(tx, req.LokerID, req.SessionID)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -68,72 +75,50 @@ func userHasBooking(userID uuid.UUID, sessionID int) bool {
 	return count > 0
 }
 
-// Function to update locker availability
-func updateLockerAvailability(tx *gorm.DB, lockerID int, sessionID int, available bool) error {
-	err := tx.Model(&model.MsLoker{}).Where("locker_id = ? AND session_id = ?", lockerID, sessionID).Update("available", available).Error
-	return err
+// MAIN LOGIC
+// the availability should be updated along with the session,
+// if user book with session_id = 1 and loker_id = 1,
+// then when user check all the available loker in session_id = 1,
+// loker_id = 1 should be available
+
+// Function to update locker availability within a session
+func updateLockerAvailability(tx *gorm.DB, lockerID int, sessionID int) error {
+	// Check if the locker is booked for the specified session
+	var count int64
+	err := tx.Model(&model.TrBooking{}).
+		Where("loker_id = ? AND session_id = ?", lockerID, sessionID).
+		Count(&count).Error
+	if err != nil {
+		return err
+	}
+
+	// If the count is greater than 0, it means the locker is booked for the session
+	if count > 0 {
+		// Update the locker availability to Booked
+		err = tx.Model(&model.MsLoker{}).
+			Where("locker_id = ?", lockerID).
+			Update("availability", "Booked").Error
+		if err != nil {
+			return err
+		}
+	} else {
+		// If the count is 0, it means the locker is available for the session
+		// Update the locker availability to Active
+		err = tx.Model(&model.MsLoker{}).
+			Where("locker_id = ?", lockerID).
+			Update("availability", "Active").Error
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-// Function to create a booking
-// func createBooking(tx *sql.Tx, userID int, sessionID int, lockerID int) error {
-// 	_, err := tx.Exec("INSERT INTO Booking (UserID, SessionID, LockerID) VALUES (?, ?, ?)", userID, sessionID, lockerID)
+// func updateLockerAvailability(tx *gorm.DB, lockerID int, sessionID int) error {
+// 	err := tx.Model(&model.MsLoker{}).
+// 		Where("locker_id = ?", lockerID).
+// 		Joins("JOIN (SELECT * FROM ms_sessions WHERE session_id = ?) AS sessions ON ms_lokers.session_id = sessions.session_id", sessionID).
+// 		Update("Availability", "Booked").Error
 // 	return err
-// }
-
-// import (
-// 	"Libeery/model"
-// 	"net/http"
-// 	"github.com/gin-gonic/gin"
-// )
-
-// func BookASessionForLater(c *gin.Context) {
-// 	var req model.BookingRequestDTO
-
-// 	if err := c.ShouldBindJSON(&req); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	// Retrieve the locker
-// 	locker := getLockerByID(req.LokerID) // You need to implement this function
-
-// 	if locker == nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "Locker not found"})
-// 		return
-// 	}
-
-// 	// Book the session
-// 	locker.BookSession(&model.ForLaterSession{
-// 		StartSession: req.StartSession,
-// 		EndSession:   req.EndSession,
-// 	}, &model.MsBookingStatus{
-// 		BookingStatusID: req.BookingStatusID,
-// 		// You may include other fields as needed
-// 	})
-
-// 	// Respond with success message
-// 	c.JSON(http.StatusOK, gin.H{"message": "Session booked successfully"})
-// }
-
-// func getLockerByID(lockerID int) *model.MsLoker {
-// 	// Assuming you have some mechanism to retrieve the locker from your data store (e.g., database)
-// 	// Here is a simple example using a temporary in-memory slice of lockers
-// 	// Replace this with your actual data retrieval mechanism
-
-// 	// Temporary in-memory data (replace this with your actual data source)
-// 	lockers := []*model.MsLoker{
-// 		{LockerID: 1, RowNumber: 1, ColumnNumber: 1, Availability: make(map[*model.ForLaterSession]bool), BookingSessions: make(map[*model.ForLaterSession]*model.MsBookingStatus), Stsrc: "A"},
-// 		{LockerID: 2, RowNumber: 2, ColumnNumber: 2, Availability: make(map[*model.ForLaterSession]bool), BookingSessions: make(map[*model.ForLaterSession]*model.MsBookingStatus), Stsrc: "A"},
-// 		// Add more lockers as needed
-// 	}
-
-// 	// Search for the locker by ID
-// 	for _, locker := range lockers {
-// 		if locker.LockerID == lockerID {
-// 			return locker
-// 		}
-// 	}
-
-// 	// If the locker with the given ID is not found, return nil
-// 	return nil
 // }
