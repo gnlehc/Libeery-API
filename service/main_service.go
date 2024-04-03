@@ -14,7 +14,12 @@ func SetupRoutes(router *gin.Engine) {
 		{
 			MhsRoutes(public)
 			StaffRoutes(public)
-			BookingRoutes(public)
+		}
+		private := api.Group("/private")
+		{
+			BookingRoutes(private)
+			SessionRoutes(private)
+			LokerRoutes(private)
 		}
 	}
 

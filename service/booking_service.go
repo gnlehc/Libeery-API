@@ -14,12 +14,18 @@ func BookASessionHandler(c *gin.Context) {
 
 	// Parse JSON body into BookingRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, output.BaseOutput{
+			Message:    err.Error(),
+			StatusCode: 403,
+		})
 		return
 	}
 
 	if err := helper.CreateBooking(c, req); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, output.BaseOutput{
+			Message:    err.Error(),
+			StatusCode: 403,
+		})
 		return
 	}
 
@@ -29,6 +35,28 @@ func BookASessionHandler(c *gin.Context) {
 	})
 }
 
-func BookingRoutes(public *gin.RouterGroup) {
-	public.POST("/bookSession", BookASessionHandler)
+func BookingHandler(c *gin.Context) {
+	resultList, err := helper.GetAllBookingData(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, output.SessionOutput{
+			Data: nil,
+			BaseOutput: output.BaseOutput{
+				Message:    err.Error(),
+				StatusCode: http.StatusInternalServerError,
+			},
+		})
+		return
+	}
+	c.JSON(http.StatusOK, output.BookingOutput{
+		Data: resultList,
+		BaseOutput: output.BaseOutput{
+			Message:    "Success",
+			StatusCode: http.StatusOK,
+		},
+	})
+}
+
+func BookingRoutes(private *gin.RouterGroup) {
+	private.GET("/bookings", BookingHandler)
+	private.POST("/bookSession", BookASessionHandler)
 }
