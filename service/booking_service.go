@@ -3,6 +3,7 @@ package service
 import (
 	"Libeery/helper"
 	"Libeery/model"
+	"Libeery/output"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,13 +18,15 @@ func BookASessionHandler(c *gin.Context) {
 		return
 	}
 
-	// Call MakeBooking function from helper package
-	if err := helper.MakeBooking(c, req); err != nil {
+	if err := helper.CreateBooking(c, req); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Booking successful"})
+	c.JSON(http.StatusOK, output.BaseOutput{
+		Message:    "Booking Successfull",
+		StatusCode: 200,
+	})
 }
 
 func BookingRoutes(public *gin.RouterGroup) {

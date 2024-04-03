@@ -11,9 +11,9 @@ import (
 	"gorm.io/gorm"
 )
 
-// Function to make a booking
-func MakeBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
-	// Mapping the fields from the request body struct to the BookingRequestDTO struct
+// Function to create a booking loker by session
+func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
+	// req initialization
 	req := model.BookingRequestDTO{
 		UserID:    reqBody.UserID,
 		SessionID: reqBody.SessionID,
@@ -35,8 +35,6 @@ func MakeBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 			tx.Rollback()
 		}
 	}()
-
-	// Update locker availability
 	err := updateLockerAvailability(tx, req.LokerID, req.SessionID)
 	if err != nil {
 		tx.Rollback()
@@ -78,7 +76,7 @@ func userHasBooking(userID uuid.UUID, sessionID int) bool {
 // MAIN LOGIC
 // the availability should be updated along with the session,
 // if user book with session_id = 1 and loker_id = 1,
-// then when user check all the available loker in session_id = 1,
+// then when user check all the available loker in session_id = 2,
 // loker_id = 1 should be available
 
 // Function to update locker availability within a session
