@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func StaffSetupRoutes(public *gin.RouterGroup) {
+func StaffRoutes(public *gin.RouterGroup) {
 	public.POST("/loginstaff",
 		helper.LoginStaff,
 	)
