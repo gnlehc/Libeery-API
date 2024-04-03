@@ -12,8 +12,9 @@ func SetupRoutes(router *gin.Engine) {
 	{
 		public := api.Group("/public")
 		{
-			MhsSetupRoutes(public)
-			StaffSetupRoutes(public)
+			MhsRoutes(public)
+			StaffRoutes(public)
+			BookingRoutes(public)
 		}
 	}
 

@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func MhsSetupRoutes(public *gin.RouterGroup) {
+func MhsRoutes(public *gin.RouterGroup) {
 	public.POST("/loginmhs",
 		helper.LoginMhs,
 	)
