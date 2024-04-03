@@ -7,3 +7,7 @@ type MsSession struct {
 	StartSession time.Time `json:"StartSession"`
 	EndSession   time.Time `json:"EndSession"`
 }
+
+// type ListMsSession struct {
+// 	ListMsSession []*MsSession `gorm:"-" json:"sessions"`
+// }
