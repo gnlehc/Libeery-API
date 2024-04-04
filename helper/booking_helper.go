@@ -43,12 +43,13 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 
 	// Create booking
 	booking := model.TrBooking{
-		UserID:    req.UserID,
-		SessionID: req.SessionID,
-		LokerID:   req.LokerID,
-		UpdatedAt: time.Now(),
-		CreatedAt: time.Now(),
-		Stsrc:     "A",
+		UserID:          req.UserID,
+		SessionID:       req.SessionID,
+		LokerID:         req.LokerID,
+		BookingStatusID: 1,
+		UpdatedAt:       time.Now(),
+		CreatedAt:       time.Now(),
+		Stsrc:           "A",
 	}
 	err = tx.Create(&booking).Error
 	if err != nil {
@@ -113,10 +114,11 @@ func updateLockerAvailability(tx *gorm.DB, lockerID int, sessionID int) error {
 	return nil
 }
 
-// func updateLockerAvailability(tx *gorm.DB, lockerID int, sessionID int) error {
-// 	err := tx.Model(&model.MsLoker{}).
-// 		Where("locker_id = ?", lockerID).
-// 		Joins("JOIN (SELECT * FROM ms_sessions WHERE session_id = ?) AS sessions ON ms_lokers.session_id = sessions.session_id", sessionID).
-// 		Update("Availability", "Booked").Error
-// 	return err
-// }
+func GetAllBookingData(c *gin.Context) ([]*model.TrBooking, error) {
+	db := database.GlobalDB
+	var bookings []*model.TrBooking
+	if err := db.Find(&bookings).Error; err != nil {
+		return nil, err
+	}
+	return bookings, nil
+}
