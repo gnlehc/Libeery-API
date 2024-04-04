@@ -43,12 +43,13 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 
 	// Create booking
 	booking := model.TrBooking{
-		UserID:    req.UserID,
-		SessionID: req.SessionID,
-		LokerID:   req.LokerID,
-		UpdatedAt: time.Now(),
-		CreatedAt: time.Now(),
-		Stsrc:     "A",
+		UserID:          req.UserID,
+		SessionID:       req.SessionID,
+		LokerID:         req.LokerID,
+		BookingStatusID: 1,
+		UpdatedAt:       time.Now(),
+		CreatedAt:       time.Now(),
+		Stsrc:           "A",
 	}
 	err = tx.Create(&booking).Error
 	if err != nil {
