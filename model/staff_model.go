@@ -12,9 +12,10 @@ type StaffLoginRequestDTO struct {
 	Password string
 }
 
-type StaffLoginResponse struct {
+type StaffLoginResponseDTO struct {
 	// Token        string `json:"token"`
 	// RefreshToken string `json:"refreshtoken"`
-	StatusCode string `json:"statuscode"`
+	StatusCode int    `json:"statuscode"`
 	Message    string `json:"message"`
+	UserId     string `json:"userid"`
 }
