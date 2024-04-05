@@ -72,45 +72,8 @@ func DatabaseMigration(db *gorm.DB) error {
 	if err := seedDefeaultMsLokerData(db); err != nil {
 		return err
 	}
-	// Inserting data to MsUser
-	var mahasiswas []model.MsMahasiswa
-	if err := db.Find(&mahasiswas).Error; err != nil {
+	if err := seedDefaultMsUsersData(db); err != nil {
 		return err
-	}
-
-	for _, mahasiswa := range mahasiswas {
-		var count int64
-		err := db.Table("ms_users").Where("nim = ?", mahasiswa.NIM).Count(&count).Error
-		if err != nil {
-			return err
-		}
-		if count == 0 {
-			if err := db.Exec(`
-            INSERT INTO ms_users ("user_id", "nim", "created_at", "updated_at", "stsrc")
-            SELECT gen_random_uuid(), ?, ?, ?, 'A'`, mahasiswa.NIM, time.Now(), time.Now()).Error; err != nil {
-				return err
-			}
-		}
-	}
-
-	var staffs []model.MsStaff
-	if err := db.Find(&staffs).Error; err != nil {
-		return err
-	}
-
-	for _, staff := range staffs {
-		var count int64
-		err := db.Table("ms_users").Where("nis = ?", staff.NIS).Count(&count).Error
-		if err != nil {
-			return err
-		}
-		if count == 0 {
-			if err := db.Exec(`
-            INSERT INTO ms_users ("user_id", "nis", "created_at", "updated_at", "stsrc")
-            SELECT gen_random_uuid(), ?, ?, ?, 'A'`, staff.NIS, time.Now(), time.Now()).Error; err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil
@@ -239,5 +202,51 @@ func seedDefeaultMsLokerData(db *gorm.DB) error {
 			}
 		}
 	}
+	return nil
+}
+
+func seedDefaultMsUsersData(db *gorm.DB) error {
+	// Inserting data to MsUser for Mahasiswa
+	var mahasiswas []model.MsMahasiswa
+	if err := db.Find(&mahasiswas).Error; err != nil {
+		return err
+	}
+
+	for _, mahasiswa := range mahasiswas {
+		var count int64
+		err := db.Table("ms_users").Where("nim = ?", mahasiswa.NIM).Count(&count).Error
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			if err := db.Exec(`
+            INSERT INTO ms_users ("user_id", "nim", "created_at", "updated_at", "stsrc")
+            SELECT gen_random_uuid(), ?, ?, ?, 'A'`, mahasiswa.NIM, time.Now(), time.Now()).Error; err != nil {
+				return err
+			}
+		}
+	}
+
+	// Inserting data to MsUser for Staff
+	var staffs []model.MsStaff
+	if err := db.Find(&staffs).Error; err != nil {
+		return err
+	}
+
+	for _, staff := range staffs {
+		var count int64
+		err := db.Table("ms_users").Where("nis = ?", staff.NIS).Count(&count).Error
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			if err := db.Exec(`
+            INSERT INTO ms_users ("user_id", "nis", "created_at", "updated_at", "stsrc")
+            SELECT gen_random_uuid(), ?, ?, ?, 'A'`, staff.NIS, time.Now(), time.Now()).Error; err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
