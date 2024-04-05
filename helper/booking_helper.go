@@ -127,7 +127,7 @@ func GetAllBookingData(c *gin.Context) ([]*model.TrBooking, error) {
 func CheckInBooking(c *gin.Context) {
 	db := database.GlobalDB
 	var booking model.TrBooking
-	var req model.CheckInBookingDTO
+	var req model.CheckInBookingRequestDTO
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"message": "Invalid request"})
