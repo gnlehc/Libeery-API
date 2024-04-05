@@ -72,22 +72,45 @@ func DatabaseMigration(db *gorm.DB) error {
 	if err := seedDefeaultMsLokerData(db); err != nil {
 		return err
 	}
-	// Inserting data into MsUser from MsMahasiswa
-	if err := db.Exec(`
-		INSERT INTO Ms_Users ("user_id", "nim", "created_at", "updated_at", "stsrc")
-		SELECT gen_random_uuid(), "nim", ?, ?, 'A'
-		FROM Ms_Mahasiswas
-		WHERE "nim" IS NOT NULL`, time.Now(), time.Now()).Error; err != nil {
+	// Inserting data to MsUser
+	var mahasiswas []model.MsMahasiswa
+	if err := db.Find(&mahasiswas).Error; err != nil {
 		return err
 	}
 
-	// Inserting data into MsUser from MsStaff
-	if err := db.Exec(`
-		INSERT INTO Ms_Users ("user_id", "nis", "created_at", "updated_at", "stsrc")
-		SELECT gen_random_uuid(), "nis", ?, ?, 'A'
-		FROM Ms_Staffs
-		WHERE "nis" IS NOT NULL`, time.Now(), time.Now()).Error; err != nil {
+	for _, mahasiswa := range mahasiswas {
+		var count int64
+		err := db.Table("ms_users").Where("nim = ?", mahasiswa.NIM).Count(&count).Error
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			if err := db.Exec(`
+            INSERT INTO ms_users ("user_id", "nim", "created_at", "updated_at", "stsrc")
+            SELECT gen_random_uuid(), ?, ?, ?, 'A'`, mahasiswa.NIM, time.Now(), time.Now()).Error; err != nil {
+				return err
+			}
+		}
+	}
+
+	var staffs []model.MsStaff
+	if err := db.Find(&staffs).Error; err != nil {
 		return err
+	}
+
+	for _, staff := range staffs {
+		var count int64
+		err := db.Table("ms_users").Where("nis = ?", staff.NIS).Count(&count).Error
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			if err := db.Exec(`
+            INSERT INTO ms_users ("user_id", "nis", "created_at", "updated_at", "stsrc")
+            SELECT gen_random_uuid(), ?, ?, ?, 'A'`, staff.NIS, time.Now(), time.Now()).Error; err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
