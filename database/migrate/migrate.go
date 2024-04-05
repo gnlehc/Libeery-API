@@ -207,6 +207,8 @@ func seedDefeaultMsLokerData(db *gorm.DB) error {
 			{LockerID: 3, RowNumber: 1, ColumnNumber: 3, Availability: "Active", Stsrc: "A"},
 			{LockerID: 4, RowNumber: 1, ColumnNumber: 4, Availability: "Active", Stsrc: "A"},
 			{LockerID: 5, RowNumber: 1, ColumnNumber: 5, Availability: "Active", Stsrc: "A"},
+			{LockerID: 6, RowNumber: 1, ColumnNumber: 6, Availability: "Active", Stsrc: "A"},
+			{LockerID: 7, RowNumber: 1, ColumnNumber: 7, Availability: "Active", Stsrc: "A"},
 		}
 		for _, data := range defaultMsLokerData {
 			if err := db.Create(&data).Error; err != nil {
