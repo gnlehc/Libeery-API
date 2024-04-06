@@ -56,7 +56,7 @@ func BookingHandler(c *gin.Context) {
 	})
 }
 
-func GetUserBooking(c *gin.Context) {
+func GetUserBookingHandler(c *gin.Context) {
 	resultList, err := helper.GetUserBookingData(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, output.SessionOutput{
@@ -78,8 +78,27 @@ func GetUserBooking(c *gin.Context) {
 
 }
 
+func CheckInBookingHandler(c *gin.Context) {
+	result, err := helper.CheckInBooking(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, output.BaseOutput{
+			Message:    err.Error(),
+			StatusCode: 403,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, output.CheckInBookingOutput{
+		Data: result,
+		BaseOutput: output.BaseOutput{
+			Message:    "Check In Successfull",
+			StatusCode: 200,
+		},
+	})
+}
+
 func BookingRoutes(private *gin.RouterGroup) {
 	private.GET("/bookings", BookingHandler)
 	private.POST("/bookSession", BookASessionHandler)
-	private.GET("/user-bookings/:userID", GetUserBooking)
+	private.GET("/user-bookings/:userID", GetUserBookingHandler)
+	private.POST("/check-in/:userID/:bookingID", CheckInBookingHandler)
 }
