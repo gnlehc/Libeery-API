@@ -23,6 +23,13 @@ type BookingRequestDTO struct {
 	LokerID   int       `json:"LokerID"`
 }
 
+type BookingRequestForNowDTO struct {
+	UserID       uuid.UUID `json:"UserID"`
+	StartSession time.Time `json:"StartSession"`
+	EndSession   time.Time `json:"EndSession"`
+	LokerID      int       `json:"LokerID"`
+}
+
 type CheckBookingRequestDTO struct {
 	UserID    uuid.UUID `json:"UserID"`
 	SessionID int       `json:"SessionID"`

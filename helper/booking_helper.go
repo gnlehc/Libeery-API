@@ -71,6 +71,77 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 	return nil
 }
 
+func CreateBookingForNow(c *gin.Context, reqBody model.BookingRequestForNowDTO) error {
+	req := model.BookingRequestForNowDTO{
+		UserID:       reqBody.UserID,
+		StartSession: reqBody.StartSession,
+		EndSession:   reqBody.EndSession,
+		LokerID:      reqBody.LokerID,
+	}
+
+	startSessionTime := req.StartSession.Truncate(time.Hour).Format("15:04:00")
+	endSessionTime := req.EndSession.Truncate(time.Hour).Format("15:04:00")
+
+	var sessionID int
+	db := database.GlobalDB
+
+	userIDexists := db.Where("user_id = ?", req.UserID).First(&model.MsUser{}).RowsAffected
+	if userIDexists == 0 {
+		return errors.New("user not found")
+	}
+
+	err := db.Model(&model.MsSession{}).
+		Where("substring(start_session::text, 12, 8) = ? AND substring(end_session::text, 12, 8) = ?", startSessionTime, endSessionTime).
+		Pluck("session_id", &sessionID).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("data doesn't exist")
+		}
+		return err
+	}
+	// Check if the user already has a booking for the same session
+	hasBooking := userHasBooking(req.UserID, sessionID)
+	if hasBooking {
+		return errors.New("user already has a booking for the same session")
+	}
+
+	// Begin transaction
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err = updateLockerAvailability(tx, req.LokerID, sessionID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	booking := model.TrBooking{
+		UserID:          req.UserID,
+		SessionID:       sessionID,
+		LokerID:         req.LokerID,
+		BookingStatusID: 1,
+		UpdatedAt:       time.Now(),
+		CreatedAt:       time.Now(),
+		Stsrc:           "A",
+	}
+	err = tx.Create(&booking).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Commit transaction
+	err = tx.Commit().Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Function to check if the user already has a booking for the same session
 func userHasBooking(userID uuid.UUID, sessionID int) bool {
 	db := database.GlobalDB
