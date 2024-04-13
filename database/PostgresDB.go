@@ -17,11 +17,16 @@ func DatabaseConnection() (err error) {
 		log.Fatal("Error loading .env file")
 	}
 	// env live railway
-	dbUsername := os.Getenv("DB_USERNAME")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbDatabase := os.Getenv("DB_DATABASE")
+	// dbUsername := os.Getenv("DB_USERNAME")
+	// dbPassword := os.Getenv("DB_PASSWORD")
+	// dbHost := os.Getenv("DB_HOST")
+	// dbPort := os.Getenv("DB_PORT")
+	// dbDatabase := os.Getenv("DB_DATABASE")
+	dbUsername := os.Getenv("PGHOST")
+	dbPassword := os.Getenv("PGUSER")
+	dbHost := os.Getenv("PGDATABASE")
+	dbPort := os.Getenv("PGPASSWORD")
+	dbDatabase := os.Getenv("PGPORT")
 
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		dbUsername,
