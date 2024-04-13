@@ -122,3 +122,32 @@ func GetAllBookingData(c *gin.Context) ([]*model.TrBooking, error) {
 	}
 	return bookings, nil
 }
+
+// haven't finished yet, so do we have booking status in TrBooking?
+func CheckInBooking(c *gin.Context) {
+	db := database.GlobalDB
+	var booking model.TrBooking
+	var req model.CheckInBookingDTO
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"message": "Invalid request"})
+		return
+	}
+
+	if err := db.Where("booking_id = ?", req.BookingID).First(&booking).Error; err != nil {
+		c.JSON(400, gin.H{"message": "Booking not found"})
+		return
+	}
+}
+
+func GetUserBookingData(c *gin.Context) ([]*model.TrBooking, error) {
+	db := database.GlobalDB
+	var bookings []*model.TrBooking
+	userID := c.Param("userID")
+
+	if err := db.Where("user_id = ?", userID).Find(&bookings).Error; err != nil {
+		c.JSON(400, gin.H{"message": "Error occurred while retrieving bookings"})
+		return nil, err
+	}
+	return bookings, nil
+}

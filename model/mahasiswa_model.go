@@ -11,10 +11,3 @@ type MhsLoginRequestDTO struct {
 	NIM      string
 	Password string
 }
-
-type MhsLoginResponse struct {
-	// Token        string `json:"token"`
-	// RefreshToken string `json:"refreshtoken"`
-	StatusCode string `json:"statuscode"`
-	Message    string `json:"message"`
-}
