@@ -23,12 +23,6 @@ func DatabaseConnection() (err error) {
 	dbPort := os.Getenv("DB_PORT")
 	dbDatabase := os.Getenv("DB_DATABASE")
 
-	// fmt.Println(dbUsername)
-	// fmt.Println(dbDatabase)
-	// fmt.Println(dbHost)
-	// fmt.Println(dbPort)
-	// fmt.Println(dbPassword)
-
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		dbUsername,
 		dbPassword,
