@@ -30,7 +30,13 @@ func LoginMhs(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
+	var username string
+	if err := database.GlobalDB.Where("NIM = ?", req.NIM).Pluck("mhs_name", &username).Error; err != nil {
+		res := output.LoginResponseDTO{StatusCode: 501, Message: "Not Implemented", UserId: ""}
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
 
-	res := output.LoginResponseDTO{StatusCode: 200, Message: "Success", UserId: userid}
+	res := output.LoginResponseDTO{StatusCode: 200, Message: "Success", UserId: userid, Username: username}
 	c.JSON(http.StatusOK, res)
 }
