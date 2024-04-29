@@ -32,7 +32,7 @@ func LoginStaff(c *gin.Context) {
 		return
 	}
 	var username string
-	if err := database.GlobalDB.Where("NIM = ?", req.NIS).Pluck("staff_name", &username).Error; err != nil {
+	if err := database.GlobalDB.Model(&model.MsStaff{}).Where("NIM = ?", req.NIS).Pluck("staff_name", &username).Error; err != nil {
 		res := output.LoginResponseDTO{StatusCode: 501, Message: "Not Implemented", UserId: ""}
 		c.JSON(http.StatusBadRequest, res)
 		return

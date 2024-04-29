@@ -31,7 +31,7 @@ func LoginMhs(c *gin.Context) {
 		return
 	}
 	var username string
-	if err := database.GlobalDB.Where("NIM = ?", req.NIM).Pluck("mhs_name", &username).Error; err != nil {
+	if err := database.GlobalDB.Model(&model.MsMahasiswa{}).Where("NIM = ?", req.NIM).Pluck("mhs_name", &username).Error; err != nil {
 		res := output.LoginResponseDTO{StatusCode: 501, Message: "Not Implemented", UserId: ""}
 		c.JSON(http.StatusBadRequest, res)
 		return
