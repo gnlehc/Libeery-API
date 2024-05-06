@@ -140,10 +140,10 @@ func CheckInBooking(c *gin.Context) {
 	}
 }
 
-func GetUserBookingData(c *gin.Context) ([]*model.TrBooking, error) {
+func GetUserBookingData(c *gin.Context, userID string) ([]*model.TrBooking, error) {
 	db := database.GlobalDB
 	var bookings []*model.TrBooking
-	userID := c.Param("userID")
+	// userid := c.Param("userID")
 
 	if err := db.Where("user_id = ?", userID).Find(&bookings).Error; err != nil {
 		c.JSON(400, gin.H{"message": "Error occurred while retrieving bookings"})
