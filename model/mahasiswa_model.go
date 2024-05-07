@@ -7,7 +7,13 @@ type MsMahasiswa struct {
 	Stsrc       string `json:"Stsrc" gorm:"size:1"`
 }
 
-type MhsLoginRequestDTO struct {
+type MsMhsLoginRequestDTO struct {
 	NIM      string
 	Password string
+}
+
+type MsMhsLoginResponseDTO struct {
+	StatusCode int    `json:"statuscode"`
+	Message    string `json:"message"`
+	UserId     string `json:"userid"`
 }

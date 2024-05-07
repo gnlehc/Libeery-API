@@ -22,6 +22,11 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 
 	db := database.GlobalDB
 
+	userIDexists := db.Where("user_id = ?", req.UserID).First(&model.MsUser{}).RowsAffected
+	if userIDexists == 0 {
+		return errors.New("user not found")
+	}
+
 	// Check if the user already has a booking for the same session
 	hasBooking := userHasBooking(req.UserID, req.SessionID)
 	if hasBooking {
@@ -45,6 +50,77 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 	booking := model.TrBooking{
 		UserID:          req.UserID,
 		SessionID:       req.SessionID,
+		LokerID:         req.LokerID,
+		BookingStatusID: 1,
+		UpdatedAt:       time.Now(),
+		CreatedAt:       time.Now(),
+		Stsrc:           "A",
+	}
+	err = tx.Create(&booking).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Commit transaction
+	err = tx.Commit().Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateBookingForNow(c *gin.Context, reqBody model.BookingRequestForNowDTO) error {
+	req := model.BookingRequestForNowDTO{
+		UserID:       reqBody.UserID,
+		StartSession: reqBody.StartSession,
+		EndSession:   reqBody.EndSession,
+		LokerID:      reqBody.LokerID,
+	}
+
+	startSessionTime := req.StartSession.Truncate(time.Hour).Format("15:04:00")
+	endSessionTime := req.EndSession.Truncate(time.Hour).Format("15:04:00")
+
+	var sessionID int
+	db := database.GlobalDB
+
+	userIDexists := db.Where("user_id = ?", req.UserID).First(&model.MsUser{}).RowsAffected
+	if userIDexists == 0 {
+		return errors.New("user not found")
+	}
+
+	err := db.Model(&model.MsSession{}).
+		Where("substring(start_session::text, 12, 8) = ? AND substring(end_session::text, 12, 8) = ?", startSessionTime, endSessionTime).
+		Pluck("session_id", &sessionID).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("data doesn't exist")
+		}
+		return err
+	}
+	// Check if the user already has a booking for the same session
+	hasBooking := userHasBooking(req.UserID, sessionID)
+	if hasBooking {
+		return errors.New("user already has a booking for the same session")
+	}
+
+	// Begin transaction
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err = updateLockerAvailability(tx, req.LokerID, sessionID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	booking := model.TrBooking{
+		UserID:          req.UserID,
+		SessionID:       sessionID,
 		LokerID:         req.LokerID,
 		BookingStatusID: 1,
 		UpdatedAt:       time.Now(),
@@ -123,21 +199,33 @@ func GetAllBookingData(c *gin.Context) ([]*model.TrBooking, error) {
 	return bookings, nil
 }
 
-// haven't finished yet, so do we have booking status in TrBooking?
-func CheckInBooking(c *gin.Context) {
+func CheckInBooking(c *gin.Context) (model.TrBooking, error) {
+	req := model.CheckInBookingRequestDTO{
+		UserID:    c.Param("userID"),
+		BookingID: c.Param("bookingID"),
+	}
+	userID, err := uuid.Parse(req.UserID)
+	if err != nil {
+		return model.TrBooking{}, err
+	}
+
+	bookingID, err := uuid.Parse(req.BookingID)
+	if err != nil {
+		return model.TrBooking{}, err
+	}
+
 	db := database.GlobalDB
-	var booking model.TrBooking
-	var req model.CheckInBookingDTO
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"message": "Invalid request"})
-		return
+	booking := model.TrBooking{}
+	bookingIDexists := db.Where("booking_id = ? and user_id = ?", bookingID, userID).First(&booking).RowsAffected
+	if bookingIDexists == 0 {
+		return model.TrBooking{}, errors.New("booking not found")
 	}
 
-	if err := db.Where("booking_id = ?", req.BookingID).First(&booking).Error; err != nil {
-		c.JSON(400, gin.H{"message": "Booking not found"})
-		return
+	booking.BookingStatusID = 2
+	if err := db.Save(&booking).Error; err != nil {
+		return model.TrBooking{}, err
 	}
+	return booking, nil
 }
 
 func GetUserBookingData(c *gin.Context, userID string) ([]*model.TrBooking, error) {
