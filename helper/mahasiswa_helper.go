@@ -3,6 +3,7 @@ package helper
 import (
 	"Libeery/database"
 	"Libeery/model"
+	"Libeery/output"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,11 +26,17 @@ func LoginMhs(c *gin.Context) {
 	}
 	var userid string
 	if err := database.GlobalDB.Model(&model.MsUser{}).Where("nim = ?", req.NIM).Pluck("user_id", &userid).Error; err != nil {
-		res := model.MsMhsLoginResponseDTO{StatusCode: 501, Message: "Not Implemented", UserId: ""}
+		res := output.LoginResponseDTO{StatusCode: 501, Message: "Not Implemented", UserId: ""}
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+	var username string
+	if err := database.GlobalDB.Model(&model.MsMahasiswa{}).Where("NIM = ?", req.NIM).Pluck("mhs_name", &username).Error; err != nil {
+		res := output.LoginResponseDTO{StatusCode: 501, Message: "Not Implemented", UserId: ""}
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	res := model.MsMhsLoginResponseDTO{StatusCode: 200, Message: "Success", UserId: userid}
+	res := output.LoginResponseDTO{StatusCode: 200, Message: "Success", UserId: userid, Username: username}
 	c.JSON(http.StatusOK, res)
 }

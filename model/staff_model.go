@@ -7,12 +7,14 @@ type MsStaff struct {
 	Stsrc         string `json:"Stsrc" gorm:"size:1"`
 }
 
-type MsStaffLoginRequestDTO struct {
+type StaffLoginRequestDTO struct {
 	NIS      string
 	Password string
 }
 
-type MsStaffLoginResponseDTO struct {
+type StaffLoginResponseDTO struct {
+	// Token        string `json:"token"`
+	// RefreshToken string `json:"refreshtoken"`
 	StatusCode int    `json:"statuscode"`
 	Message    string `json:"message"`
 	UserId     string `json:"userid"`
