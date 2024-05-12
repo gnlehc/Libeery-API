@@ -51,7 +51,29 @@ func GetAcaraPaginationHandler(c *gin.Context) {
 	})
 }
 
+func GetAcaraDetailsHandler(c *gin.Context) {
+	id := c.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter"})
+		return
+	}
+	acara, err := helper.GetAcaraDetails(c, idInt)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve data"})
+		return
+	}
+	c.JSON(http.StatusOK, output.GetAcaraDetailsOutput{
+		Data: acara,
+		BaseOutput: output.BaseOutput{
+			Message:    "Success",
+			StatusCode: 200,
+		},
+	})
+}
+
 func AcaraRoutes(private *gin.RouterGroup) {
 	private.GET("/acara", GetAcaraPaginationHandler)
 	private.GET("/get-acara", GetAllAcaraHandler)
+	private.GET("/acara/:id", GetAcaraDetailsHandler)
 }

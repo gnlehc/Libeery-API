@@ -6,3 +6,8 @@ type GetAcaraOutput struct {
 	Data       []*model.MsAcara
 	BaseOutput BaseOutput
 }
+
+type GetAcaraDetailsOutput struct {
+	Data       *model.MsAcara
+	BaseOutput BaseOutput
+}

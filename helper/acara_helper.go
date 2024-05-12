@@ -27,3 +27,12 @@ func GetAcaraPagination(c *gin.Context, page, take int) ([]*model.MsAcara, error
 	}
 	return acara, nil
 }
+
+func GetAcaraDetails(c *gin.Context, id int) (*model.MsAcara, error) {
+	db := database.GlobalDB
+	var acara model.MsAcara
+	if err := db.Where("acara_id = ?", id).First(&acara).Error; err != nil {
+		return nil, err
+	}
+	return &acara, nil
+}
