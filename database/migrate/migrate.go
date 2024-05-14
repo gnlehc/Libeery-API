@@ -555,7 +555,6 @@ func seedDefaultAcara(db *gorm.DB) error {
 	if count <= 0 {
 		defaultAcaraData := []model.MsAcara{
 			{
-				AcaraID:        1,
 				AcaraName:      "Sosialisasi BINUS MAYA Avatar",
 				AcaraStartTime: parseTime("09:00:00"),
 				AcaraEndTime:   parseTime("11:00:00"),
@@ -568,7 +567,6 @@ func seedDefaultAcara(db *gorm.DB) error {
 				Stsrc:          "A",
 			},
 			{
-				AcaraID:        2,
 				AcaraName:      "Road to PILMAPRES BINUS University 2024",
 				AcaraStartTime: parseTime("09:00:00"),
 				AcaraEndTime:   parseTime("11:00:00"),
@@ -581,7 +579,6 @@ func seedDefaultAcara(db *gorm.DB) error {
 				Stsrc:          "A",
 			},
 			{
-				AcaraID:        3,
 				AcaraName:      "Merancang Produk untuk Sustainable Development Goals di BINUS University",
 				AcaraStartTime: parseTime("09:00:00"),
 				AcaraEndTime:   parseTime("11:00:00"),
@@ -594,7 +591,6 @@ func seedDefaultAcara(db *gorm.DB) error {
 				Stsrc:          "A",
 			},
 			{
-				AcaraID:        4,
 				AcaraName:      "Unicharm Goes To BINUS University",
 				AcaraStartTime: parseTime("09:00:00"),
 				AcaraEndTime:   parseTime("11:00:00"),

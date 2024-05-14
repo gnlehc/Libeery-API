@@ -23,7 +23,7 @@ func GetAllLokerDataBySessionID(c *gin.Context, sessionID int) ([]*model.MsLoker
 
 	var lokers []*model.MsLoker
 
-	err := db.Raw("SELECT * FROM ms_lokers WHERE availability = 'Active' AND locker_id NOT IN (SELECT DISTINCT loker_id FROM tr_bookings WHERE session_id = ?)", sessionID).Scan(&lokers).Error
+	err := db.Raw("SELECT * FROM ms_lokers WHERE availability = 'Active' AND loker_id NOT IN (SELECT DISTINCT loker_id FROM tr_bookings WHERE session_id = ?)", sessionID).Scan(&lokers).Error
 	if err != nil {
 		return nil, err
 	}
