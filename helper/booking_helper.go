@@ -217,33 +217,37 @@ func GetAllBookingData(c *gin.Context) ([]*model.TrBooking, error) {
 	return bookings, nil
 }
 
-func CheckInBooking(c *gin.Context) (model.TrBooking, error) {
+func CheckInBooking(c *gin.Context, reqBody model.CheckInBookingRequestDTO) error {
 	req := model.CheckInBookingRequestDTO{
-		UserID:    c.Param("userID"),
-		BookingID: c.Param("bookingID"),
+		UserID:    reqBody.UserID,
+		BookingID: reqBody.BookingID,
 	}
 	userID, err := uuid.Parse(req.UserID)
 	if err != nil {
-		return model.TrBooking{}, err
+		return err
 	}
 
 	bookingID, err := uuid.Parse(req.BookingID)
 	if err != nil {
-		return model.TrBooking{}, err
+		return err
 	}
 
 	db := database.GlobalDB
 	booking := model.TrBooking{}
 	bookingIDexists := db.Where("booking_id = ? and user_id = ?", bookingID, userID).First(&booking).RowsAffected
 	if bookingIDexists == 0 {
-		return model.TrBooking{}, errors.New("booking not found")
+		return errors.New("booking not found")
+	}
+
+	if booking.BookingStatusID == 2 {
+		return errors.New("booking already checked in")
 	}
 
 	booking.BookingStatusID = 2
 	if err := db.Save(&booking).Error; err != nil {
-		return model.TrBooking{}, err
+		return err
 	}
-	return booking, nil
+	return nil
 }
 
 func GetUserBookingData(c *gin.Context, userID string) ([]*model.TrBooking, error) {
