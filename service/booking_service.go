@@ -21,7 +21,7 @@ func BookASessionHandler(c *gin.Context) {
 		return
 	}
 
-	if err := helper.CreateBooking(c, req); err != nil {
+	if err := helper.CreateBookingForLater(c, req); err != nil {
 		c.JSON(http.StatusInternalServerError, output.BaseOutput{
 			Message:    err.Error(),
 			StatusCode: 403,
@@ -106,7 +106,7 @@ func GetUserBooking(c *gin.Context) {
 }
 
 func CheckInBookingHandler(c *gin.Context) {
-	var req model.CheckInBookingRequestDTO
+	var req model.CheckInOutBookingRequestDTO
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, output.BaseOutput{
@@ -125,7 +125,32 @@ func CheckInBookingHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, output.BaseOutput{
-		Message:    "Check in successful",
+		Message:    "Check In Successful",
+		StatusCode: 200,
+	})
+}
+
+func CheckOutBookingHandler(c *gin.Context) {
+	var req model.CheckInOutBookingRequestDTO
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, output.BaseOutput{
+			Message:    err.Error(),
+			StatusCode: 403,
+		})
+		return
+	}
+
+	if err := helper.CheckOutBooking(c, req); err != nil {
+		c.JSON(http.StatusInternalServerError, output.BaseOutput{
+			Message:    err.Error(),
+			StatusCode: 403,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, output.BaseOutput{
+		Message:    "Check Out Successful",
 		StatusCode: 200,
 	})
 }
@@ -136,5 +161,5 @@ func BookingRoutes(private *gin.RouterGroup) {
 	private.POST("/bookSession-forNow", BookASessionForNowHandler)
 	private.GET("/user-bookings/", GetUserBooking)
 	private.POST("/check-in", CheckInBookingHandler)
-	// private.GET("/user-bookings/:userID", GetUserBooking)
+	private.POST("/check-out", CheckOutBookingHandler)
 }

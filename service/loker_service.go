@@ -29,7 +29,7 @@ func LokerHandler(c *gin.Context) {
 		},
 	})
 }
-func LockerBySessionIDDataHandler(c *gin.Context) {
+func LokerBySessionIDDataHandler(c *gin.Context) {
 	sessionID := c.Query("session_id")
 	if sessionID == "" {
 		c.JSON(http.StatusBadRequest, output.BaseOutput{
@@ -50,7 +50,7 @@ func LockerBySessionIDDataHandler(c *gin.Context) {
 	}
 
 	// Get locker data for the specified session ID
-	lockerData, err := helper.GetAllLokerDataBySessionID(c, sessionIDInt)
+	lokerData, err := helper.GetAllLokerDataBySessionID(c, sessionIDInt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, output.BaseOutput{
 			Message:    err.Error(),
@@ -61,7 +61,7 @@ func LockerBySessionIDDataHandler(c *gin.Context) {
 
 	// Return locker data as JSON response
 	c.JSON(http.StatusOK, output.LokerOutput{
-		Data: lockerData,
+		Data: lokerData,
 		BaseOutput: output.BaseOutput{
 			Message:    "Success",
 			StatusCode: 200,
@@ -70,5 +70,5 @@ func LockerBySessionIDDataHandler(c *gin.Context) {
 }
 func LokerRoutes(private *gin.RouterGroup) {
 	private.GET("/lokers", LokerHandler)
-	private.GET("/lokerBySessionID", LockerBySessionIDDataHandler)
+	private.GET("/lokerBySessionID", LokerBySessionIDDataHandler)
 }
