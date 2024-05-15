@@ -1,7 +1,7 @@
 package model
 
 type MsLoker struct {
-	LockerID     int    `gorm:"primaryKey" json:"LockerID"`
+	LokerID      int    `gorm:"primaryKey" json:"LokerID"`
 	RowNumber    int    `json:"RowNumber"`
 	ColumnNumber int    `json:"ColumnNumber"`
 	Availability string `json:"Availability"`

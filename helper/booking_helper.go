@@ -12,7 +12,7 @@ import (
 )
 
 // Function to create a booking loker by session
-func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
+func CreateBookingForLater(c *gin.Context, reqBody model.BookingRequestDTO) error {
 	// req initialization
 	req := model.BookingRequestDTO{
 		UserID:    reqBody.UserID,
@@ -33,6 +33,15 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 		return errors.New("user already has a booking for the same session")
 	}
 
+	// Check if the locker is available for the specified session
+	var lokerCount int64
+	if err := db.Model(&model.MsLoker{}).Where("loker_id = ? AND availability = 'Active'", req.LokerID).Count(&lokerCount).Error; err != nil {
+		return err
+	}
+	if lokerCount == 0 {
+		return errors.New("loker not available for this session")
+	}
+
 	// Begin transaction
 	tx := db.Begin()
 	defer func() {
@@ -40,8 +49,20 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 			tx.Rollback()
 		}
 	}()
-	err := updateLockerAvailability(tx, req.LokerID, req.SessionID)
-	if err != nil {
+
+	// Check if the locker is already booked for the session
+	var bookingCount int64
+	if err := db.Model(&model.TrBooking{}).Where("loker_id = ? AND session_id = ?", req.LokerID, req.SessionID).Count(&bookingCount).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if bookingCount > 0 {
+		tx.Rollback()
+		return errors.New("loker already booked for this session")
+	}
+
+	// Update locker availability
+	if err := updateLokerAvailability(tx, req.LokerID, req.SessionID); err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -56,15 +77,13 @@ func CreateBooking(c *gin.Context, reqBody model.BookingRequestDTO) error {
 		CreatedAt:       time.Now(),
 		Stsrc:           "A",
 	}
-	err = tx.Create(&booking).Error
-	if err != nil {
+	if err := tx.Create(&booking).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
 	// Commit transaction
-	err = tx.Commit().Error
-	if err != nil {
+	if err := tx.Commit().Error; err != nil {
 		return err
 	}
 
@@ -112,7 +131,7 @@ func CreateBookingForNow(c *gin.Context, reqBody model.BookingRequestForNowDTO) 
 			tx.Rollback()
 		}
 	}()
-	err = updateLockerAvailability(tx, req.LokerID, sessionID)
+	err = updateLokerAvailability(tx, req.LokerID, sessionID)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -157,30 +176,29 @@ func userHasBooking(userID uuid.UUID, sessionID int) bool {
 // loker_id = 1 should be available
 
 // Function to update locker availability within a session
-func updateLockerAvailability(tx *gorm.DB, lockerID int, sessionID int) error {
-	// Check if the locker is booked for the specified session
+func updateLokerAvailability(tx *gorm.DB, lokerID int, sessionID int) error {
+	// Count the number of bookings for the specified locker and session
 	var count int64
 	err := tx.Model(&model.TrBooking{}).
-		Where("loker_id = ? AND session_id = ?", lockerID, sessionID).
+		Where("loker_id = ? AND session_id = ?", lokerID, sessionID).
 		Count(&count).Error
 	if err != nil {
 		return err
 	}
 
-	// If the count is greater than 0, it means the locker is booked for the session
-	if count > 0 {
-		// Update the locker availability to Booked
+	// Check if the count is equal to or greater than 10 (indicating the locker is fully booked)
+	if count >= 10 {
+		// If the locker is fully booked, update the locker availability to Booked
 		err = tx.Model(&model.MsLoker{}).
-			Where("locker_id = ?", lockerID).
+			Where("loker_id = ?", lokerID).
 			Update("availability", "Booked").Error
 		if err != nil {
 			return err
 		}
 	} else {
-		// If the count is 0, it means the locker is available for the session
-		// Update the locker availability to Active
+		// If the locker is not fully booked, update the locker availability to Active
 		err = tx.Model(&model.MsLoker{}).
-			Where("locker_id = ?", lockerID).
+			Where("loker_id = ?", lokerID).
 			Update("availability", "Active").Error
 		if err != nil {
 			return err
@@ -199,33 +217,37 @@ func GetAllBookingData(c *gin.Context) ([]*model.TrBooking, error) {
 	return bookings, nil
 }
 
-func CheckInBooking(c *gin.Context) (model.TrBooking, error) {
+func CheckInBooking(c *gin.Context, reqBody model.CheckInBookingRequestDTO) error {
 	req := model.CheckInBookingRequestDTO{
-		UserID:    c.Param("userID"),
-		BookingID: c.Param("bookingID"),
+		UserID:    reqBody.UserID,
+		BookingID: reqBody.BookingID,
 	}
 	userID, err := uuid.Parse(req.UserID)
 	if err != nil {
-		return model.TrBooking{}, err
+		return err
 	}
 
 	bookingID, err := uuid.Parse(req.BookingID)
 	if err != nil {
-		return model.TrBooking{}, err
+		return err
 	}
 
 	db := database.GlobalDB
 	booking := model.TrBooking{}
 	bookingIDexists := db.Where("booking_id = ? and user_id = ?", bookingID, userID).First(&booking).RowsAffected
 	if bookingIDexists == 0 {
-		return model.TrBooking{}, errors.New("booking not found")
+		return errors.New("booking not found")
+	}
+
+	if booking.BookingStatusID == 2 {
+		return errors.New("booking already checked in")
 	}
 
 	booking.BookingStatusID = 2
 	if err := db.Save(&booking).Error; err != nil {
-		return model.TrBooking{}, err
+		return err
 	}
-	return booking, nil
+	return nil
 }
 
 func GetUserBookingData(c *gin.Context, userID string) ([]*model.TrBooking, error) {
