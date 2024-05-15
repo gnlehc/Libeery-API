@@ -53,7 +53,7 @@ func GetAcaraPaginationHandler(c *gin.Context) {
 }
 
 func GetAcaraDetailsHandler(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Query("id")
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter"})
@@ -99,6 +99,6 @@ func CreateAcaraHandler(c *gin.Context) {
 func AcaraRoutes(private *gin.RouterGroup) {
 	private.GET("/acara", GetAcaraPaginationHandler)
 	private.GET("/get-acara", GetAllAcaraHandler)
-	private.GET("/acara/:id", GetAcaraDetailsHandler)
+	private.GET("/acara-detail/", GetAcaraDetailsHandler)
 	private.POST("/create-acara", CreateAcaraHandler)
 }
