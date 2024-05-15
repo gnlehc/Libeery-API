@@ -2,6 +2,7 @@ package service
 
 import (
 	"Libeery/helper"
+	"Libeery/model"
 	"Libeery/output"
 	"net/http"
 	"strconv"
@@ -72,8 +73,32 @@ func GetAcaraDetailsHandler(c *gin.Context) {
 	})
 }
 
+func CreateAcaraHandler(c *gin.Context) {
+	var reqBody model.MsAcaraRequestDTO
+
+	// Bind the request body to the request DTO
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Call the helper function to create the Acara
+	err := helper.CreateAcara(c, reqBody)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Acara"})
+		return
+	}
+
+	// Return success response
+	c.JSON(http.StatusCreated, output.BaseOutput{
+		Message:    "Created Acara Successfully",
+		StatusCode: http.StatusOK,
+	})
+}
+
 func AcaraRoutes(private *gin.RouterGroup) {
 	private.GET("/acara", GetAcaraPaginationHandler)
 	private.GET("/get-acara", GetAllAcaraHandler)
 	private.GET("/acara/:id", GetAcaraDetailsHandler)
+	private.POST("/create-acara", CreateAcaraHandler)
 }

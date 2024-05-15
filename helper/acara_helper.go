@@ -36,3 +36,24 @@ func GetAcaraDetails(c *gin.Context, id int) (*model.MsAcara, error) {
 	}
 	return &acara, nil
 }
+
+func CreateAcara(c *gin.Context, reqBody model.MsAcaraRequestDTO) error {
+	db := database.GlobalDB
+	acara := model.MsAcara{
+		AcaraName:      reqBody.AcaraName,
+		AcaraStartTime: reqBody.AcaraStartTime,
+		AcaraEndTime:   reqBody.AcaraEndTime,
+		AcaraDate:      reqBody.AcaraDate,
+		AcaraLocation:  reqBody.AcaraLocation,
+		AcaraDetails:   reqBody.AcaraDetails,
+		SpeakerName:    reqBody.SpeakerName,
+		RegisterLink:   reqBody.RegisterLink,
+		AcaraImage:     reqBody.AcaraImage,
+		Stsrc:          "A",
+	}
+
+	if err := db.Create(&acara).Error; err != nil {
+		return err
+	}
+	return nil
+}

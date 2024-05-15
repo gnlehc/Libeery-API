@@ -21,7 +21,7 @@ func BookASessionHandler(c *gin.Context) {
 		return
 	}
 
-	if err := helper.CreateBooking(c, req); err != nil {
+	if err := helper.CreateBookingForLater(c, req); err != nil {
 		c.JSON(http.StatusInternalServerError, output.BaseOutput{
 			Message:    err.Error(),
 			StatusCode: 403,
