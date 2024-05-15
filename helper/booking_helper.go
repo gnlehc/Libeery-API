@@ -217,8 +217,8 @@ func GetAllBookingData(c *gin.Context) ([]*model.TrBooking, error) {
 	return bookings, nil
 }
 
-func CheckInBooking(c *gin.Context, reqBody model.CheckInBookingRequestDTO) error {
-	req := model.CheckInBookingRequestDTO{
+func CheckInBooking(c *gin.Context, reqBody model.CheckInOutBookingRequestDTO) error {
+	req := model.CheckInOutBookingRequestDTO{
 		UserID:    reqBody.UserID,
 		BookingID: reqBody.BookingID,
 	}
@@ -260,4 +260,43 @@ func GetUserBookingData(c *gin.Context, userID string) ([]*model.TrBooking, erro
 		return nil, err
 	}
 	return bookings, nil
+}
+
+func CheckOutBooking(c *gin.Context, reqBody model.CheckInOutBookingRequestDTO) error {
+	req := model.CheckInOutBookingRequestDTO{
+		UserID:    reqBody.UserID,
+		BookingID: reqBody.BookingID,
+	}
+	userID, err := uuid.Parse(req.UserID)
+	if err != nil {
+		return err
+	}
+
+	bookingID, err := uuid.Parse(req.BookingID)
+	if err != nil {
+		return err
+	}
+	db := database.GlobalDB
+	booking := model.TrBooking{}
+	bookingIDexists := db.Where("booking_id = ? and user_id = ?", bookingID, userID).First(&booking).RowsAffected
+	if bookingIDexists == 0 {
+		return errors.New("booking not found")
+	}
+
+	switch booking.BookingStatusID {
+	case 1:
+		return errors.New("you haven't checked in yet")
+	case 2:
+		booking.BookingStatusID = 3
+		if err := db.Save(&booking).Error; err != nil {
+			return err
+		}
+	case 3:
+		return errors.New("booking already checked out")
+
+	default:
+		return errors.New("invalid booking status")
+	}
+
+	return nil
 }
