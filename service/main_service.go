@@ -20,6 +20,7 @@ func SetupRoutes(router *gin.Engine) {
 			BookingRoutes(private)
 			SessionRoutes(private)
 			LokerRoutes(private)
+			AcaraRoutes(private)
 		}
 	}
 

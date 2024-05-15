@@ -53,6 +53,12 @@ func DatabaseMigration(db *gorm.DB) error {
 		}
 	}
 
+	if !migrator.HasTable(&model.MsAcara{}) {
+		if err := db.AutoMigrate(&model.MsAcara{}); err != nil {
+			return err
+		}
+	}
+
 	// Data seeding
 	if err := seedDefaultMahasiswaData(db); err != nil {
 		return err
@@ -73,6 +79,9 @@ func DatabaseMigration(db *gorm.DB) error {
 		return err
 	}
 	if err := seedDefaultMsUsersData(db); err != nil {
+		return err
+	}
+	if err := seedDefaultAcara(db); err != nil {
 		return err
 	}
 
@@ -535,5 +544,74 @@ func seedDefaultMsUsersData(db *gorm.DB) error {
 		}
 	}
 
+	return nil
+}
+
+func seedDefaultAcara(db *gorm.DB) error {
+	var count int64
+	if err := db.Model(&model.MsAcara{}).Count(&count).Error; err != nil {
+		return err
+	}
+	if count <= 0 {
+		defaultAcaraData := []model.MsAcara{
+			{
+				AcaraID:        1,
+				AcaraName:      "Sosialisasi BINUS MAYA Avatar",
+				AcaraStartTime: parseTime("09:00:00"),
+				AcaraEndTime:   parseTime("11:00:00"),
+				AcaraDate:      time.Date(2024, time.May, 15, 0, 0, 0, 0, time.UTC),
+				AcaraLocation:  "LKC Refreshment Room",
+				AcaraDetails:   "Halo BINUSIANS! Dalam BINUS MAYA versi 3.0, kamu akan memiliki kesempatan untuk mengekspresikan diri dengan lebih unik dan personal melalui avatar kustom yang dapat kamu buat sendiri.",
+				SpeakerName:    "Kanyadian Idananta, S.Kom., M.TI",
+				RegisterLink:   "https://forms.gle/ZyXPmn8Pg6xccUFKA",
+				AcaraImage:     "https://binus.ac.id/wp-content/uploads/2021/02/217-0-Binusacid.jpg",
+				Stsrc:          "A",
+			},
+			{
+				AcaraID:        2,
+				AcaraName:      "Road to PILMAPRES BINUS University 2024",
+				AcaraStartTime: parseTime("09:00:00"),
+				AcaraEndTime:   parseTime("11:00:00"),
+				AcaraDate:      time.Date(2024, time.May, 18, 0, 0, 0, 0, time.UTC),
+				AcaraLocation:  "LKC Refreshment Room",
+				AcaraDetails:   "Pemilihan Mahasiswa Berprestasi (PILMAPRES) merupakan kompetisi Mahasiswa yang diselenggarakan oleh Pusat Prestasi Nasional yang berada di bawah naungan Kementerian Riset, Teknologi, dan Pendidikan Tinggi (KEMENRISTEKDIKTI) setiap tahunnya.",
+				SpeakerName:    "Herru Darmadi, S.Kom., M.TI",
+				RegisterLink:   "https://forms.gle/LCJemRV7pXjUryuMA",
+				AcaraImage:     "https://student.binus.ac.id/wp-content/uploads/2024/03/Student-Website-Web-Banner.jpg",
+				Stsrc:          "A",
+			},
+			{
+				AcaraID:        3,
+				AcaraName:      "Merancang Produk untuk Sustainable Development Goals di BINUS University",
+				AcaraStartTime: parseTime("09:00:00"),
+				AcaraEndTime:   parseTime("11:00:00"),
+				AcaraDate:      time.Date(2024, time.May, 19, 0, 0, 0, 0, time.UTC),
+				AcaraLocation:  "LKC Refreshment Room",
+				AcaraDetails:   "BINUS University ikut berpartisipasi dan mendukung penuh dalam 17 Tujuan Pembangunan Berkelanjutan (Sustainable Development Goals/SDGs), yang merupakan seruan mendesak bagi semua negara – baik maju maupun berkembang – untuk melakukan tindakan dalam kemitraan global.",
+				SpeakerName:    "Alvina Aulia, S.Kom., M.TI.",
+				RegisterLink:   "https://forms.gle/YXxK98wU7qjQyuXv6",
+				AcaraImage:     "https://student.binus.ac.id/wp-content/uploads/2024/04/WhatsApp-Image-2024-04-02-at-13.37.43.jpeg",
+				Stsrc:          "A",
+			},
+			{
+				AcaraID:        4,
+				AcaraName:      "Unicharm Goes To BINUS University",
+				AcaraStartTime: parseTime("09:00:00"),
+				AcaraEndTime:   parseTime("11:00:00"),
+				AcaraDate:      time.Date(2024, time.May, 21, 0, 0, 0, 0, time.UTC),
+				AcaraLocation:  "LKC Refreshment Room",
+				AcaraDetails:   "Dalam acara ini, Unicharm memperkenalkan produk-produk unggulannya yang dapat digunakan dari berbagai usia, mulai dari usia balita, remaja, lanjut usia hingga hewan peliharaan.",
+				SpeakerName:    "Anak Agung Ayu Mirah Krisnawati, S.Sos., M.I.Kom",
+				RegisterLink:   "https://forms.gle/nS8DvwEC3iFLKhsd6",
+				AcaraImage:     "https://student.binus.ac.id/wp-content/uploads/2024/03/WhatsApp-Image-2024-03-08-at-1.52.10-PM.jpeg",
+				Stsrc:          "A",
+			},
+		}
+		for _, data := range defaultAcaraData {
+			if err := db.Create(&data).Error; err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
