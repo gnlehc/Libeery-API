@@ -3,7 +3,7 @@ package model
 import "time"
 
 type MsAcara struct {
-	AcaraID        int       `json:"AcaraID" gorm:"primaryKey;autoIncrement;size:10`
+	AcaraID        int       `json:"AcaraID" gorm:"primaryKey;autoIncrement;size:10"`
 	AcaraName      string    `json:"AcaraName"`
 	AcaraStartTime time.Time `json:"AcaraStartTime"`
 	AcaraEndTime   time.Time `json:"AcaraEndTime"`
@@ -12,6 +12,6 @@ type MsAcara struct {
 	AcaraDetails   string    `json:"AcaraDetails"`
 	SpeakerName    string    `json:"SpeakerName"`
 	RegisterLink   string    `json:"RegisterLink"`
-	AcaraImage     string    `json:"AcaraImage""`
+	AcaraImage     string    `json:"AcaraImage"`
 	Stsrc          string    `json:"Stsrc" gorm:"size:1"`
 }
