@@ -16,3 +16,12 @@ func GetListOfBooks(c *gin.Context) ([]*model.MsBook, error) {
 
 	return ListOfBooks, nil
 }
+
+func GetBookDetails(c *gin.Context, id int) (*model.MsBook, error) {
+	db := database.GlobalDB
+	var book model.MsBook
+	if err := db.Where("book_id = ?", id).First(&book).Error; err != nil {
+		return nil, err
+	}
+	return &book, nil
+}
