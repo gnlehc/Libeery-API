@@ -30,7 +30,4 @@ https://docs.google.com/spreadsheets/d/12SzfR0zmTDRnq2EfOMzUBskXufjXkHPnJT9YJGHP
 
 ## Image
 
-![Libeery Logo](![Main Board](https://github.com/gnlehc/Libeery-API/assets/110314460/2528aa98-d214-4630-b070-90bd0ab51b33)
-)
-
-The Libeery logo represents our commitment to simplifying library resource management and enhancing the user experience for students and staff at Binus University.
+(![Main Board](https://github.com/gnlehc/Libeery-API/assets/110314460/2528aa98-d214-4630-b070-90bd0ab51b33)
