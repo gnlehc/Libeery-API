@@ -7,9 +7,10 @@ Welcome to the Libeery API! This API, built using GoLang, supports the Libeery m
 Libeery addresses common challenges faced by students and staff in managing library resources, including uncertain locker availability, cumbersome book borrowing processes, inefficient event registration via Google Forms, and time-consuming stock management for staff.
 
 ## How to Run
+```
+railway run go run .
+```
 
-To run the Libeery API locally, use the following command:
-"railway run go run ."
 
 This command starts the API server, enabling access to its endpoints and functionalities.
 
