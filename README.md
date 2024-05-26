@@ -30,4 +30,4 @@ https://docs.google.com/spreadsheets/d/12SzfR0zmTDRnq2EfOMzUBskXufjXkHPnJT9YJGHP
 
 ## Image
 
-(![Main Board](https://github.com/gnlehc/Libeery-API/assets/110314460/2528aa98-d214-4630-b070-90bd0ab51b33)
+![Main Board](https://github.com/gnlehc/Libeery-API/assets/110314460/2528aa98-d214-4630-b070-90bd0ab51b33)
