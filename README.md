@@ -1,6 +1,7 @@
 # Libeery API
 
 Welcome to the Libeery API! This API, built using GoLang, supports the Libeery mobile application, aimed at simplifying library resource management at Binus University.
+![Main Board](https://github.com/gnlehc/Libeery-API/assets/110314460/2528aa98-d214-4630-b070-90bd0ab51b33)
 
 ## Project Overview
 
@@ -28,7 +29,3 @@ The project structure is organized as follows:
 
 The API provides the following endpoints you can check this complete documentation:
 https://docs.google.com/spreadsheets/d/12SzfR0zmTDRnq2EfOMzUBskXufjXkHPnJT9YJGHPGRc/edit?usp=sharing
-
-## Image
-
-![Main Board](https://github.com/gnlehc/Libeery-API/assets/110314460/2528aa98-d214-4630-b070-90bd0ab51b33)
