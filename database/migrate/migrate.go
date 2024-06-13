@@ -113,6 +113,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1960,
 				Abstract:  "To Kill a Mockingbird is a novel by Harper Lee published in 1960. It explores themes of racial injustice, moral growth, and the loss of innocence in the American South during the 1930s. The story follows young Scout Finch and her brother Jem as their father, lawyer Atticus Finch, defends a black man falsely accused of raping a white woman. Through their experiences, the children learn about empathy, compassion, and the complexities of human nature.",
 				Stock:     7,
+				Photo:     "https://m.media-amazon.com/images/I/51IXWZzlgSL._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -125,6 +126,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1813,
 				Abstract:  "Pride and Prejudice is a romantic novel by Jane Austen, first published in 1813. It follows the story of Elizabeth Bennet, the spirited and independent protagonist, as she navigates the societal expectations and pressures of early 19th-century England. The novel explores themes of love, marriage, class, and reputation, and is known for its wit, irony, and memorable characters.",
 				Stock:     2,
+				Photo:     "https://m.media-amazon.com/images/I/51YxyvZCpXS._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -137,6 +139,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1925,
 				Abstract:  "The Great Gatsby is a novel by American author F. Scott Fitzgerald, first published in 1925. Set in the Roaring Twenties on Long Island, New York, the story follows the enigmatic Jay Gatsby and his pursuit of the elusive Daisy Buchanan. Through Gatsby's extravagant parties and romantic gestures, the novel explores themes of wealth, class, love, and the American Dream.",
 				Stock:     9,
+				Photo:     "https://m.media-amazon.com/images/I/515Ra7ttqIL._SX342_SY445_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -149,6 +152,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1949,
 				Abstract:  "1984 is a dystopian novel by George Orwell published in 1949. It is set in a totalitarian society ruled by the oppressive Party led by Big Brother, where individualism and independent thought are suppressed. The novel follows protagonist Winston Smith as he rebels against the Party's control and seeks freedom and truth in a world of surveillance and propaganda.",
 				Stock:     4,
+				Photo:     "https://m.media-amazon.com/images/I/41aCCnK8p6L._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -161,6 +165,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1951,
 				Abstract:  "The Catcher in the Rye is a novel by J.D. Salinger, first published in 1951. It is narrated by Holden Caulfield, a disillusioned teenager who reflects on his experiences after being expelled from prep school. The novel explores themes of teenage angst, alienation, and the search for authenticity in a world perceived as phony by the protagonist.",
 				Stock:     1,
+				Photo:     "https://images-na.ssl-images-amazon.com/images/I/81OthjkJBuL.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -173,6 +178,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      2013,
 				Abstract:  "The Goldfinch is a novel by Donna Tartt published in 2013. It follows the life of Theo Decker, a young boy who survives a terrorist attack at the Metropolitan Museum of Art in New York City. The novel explores themes of loss, trauma, art, and the search for meaning in the face of adversity.",
 				Stock:     0,
+				Photo:     "https://m.media-amazon.com/images/I/417FX4orgXL._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -185,6 +191,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1963,
 				Abstract:  "The Bell Jar is a novel by Sylvia Plath, first published in 1963 under the pseudonym Victoria Lucas. It is a semi-autobiographical account of Plath's own struggles with mental illness, following protagonist Esther Greenwood's descent into depression and her experiences in a psychiatric hospital. The novel explores themes of identity, gender roles, and the pressures of societal expectations.",
 				Stock:     0,
+				Photo:     "https://m.media-amazon.com/images/I/415yzhIbkrL._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -197,6 +204,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      2003,
 				Abstract:  "The Kite Runner is a novel by Khaled Hosseini published in 2003. It follows the story of Amir, a young boy from Kabul, Afghanistan, and his journey to seek redemption for betraying his childhood friend Hassan. The novel explores themes of guilt, redemption, and the complex relationship between fathers and sons against the backdrop of the tumultuous events in Afghanistan from the fall of the monarchy to the rise of the Taliban regime.",
 				Stock:     5,
+				Photo:     "https://m.media-amazon.com/images/I/41fAt2RhwML._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -209,6 +217,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1987,
 				Abstract:  "Beloved is a novel by Toni Morrison published in 1987. Set after the American Civil War, it tells the story of Sethe, a former slave who escaped to Ohio, but is haunted by the memories of her past and the ghost of her deceased daughter. The novel explores themes of slavery, trauma, and the struggle for freedom, and employs a unique narrative style that blends realism with elements of magic and folklore.",
 				Stock:     1,
+				Photo:     "https://m.media-amazon.com/images/I/31xXfVRPC4L._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 			{
@@ -221,6 +230,7 @@ func seedDefaultBookData(db *gorm.DB) error {
 				Year:      1988,
 				Abstract:  "The Alchemist is a novel by Brazilian author Paulo Coelho, first published in 1988. It follows the journey of Santiago, a young Andalusian shepherd, as he travels from Spain to Egypt in search of a hidden treasure. Along the way, Santiago encounters various characters who impart wisdom and lessons about life, destiny, and the pursuit of one's dreams. The novel explores themes of self-discovery, personal legend, and the interconnectedness of all things.",
 				Stock:     2,
+				Photo:     "https://m.media-amazon.com/images/I/51YsnEoNr-L._SY445_SX342_.jpg",
 				Stsrc:     "A",
 			},
 		}
