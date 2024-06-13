@@ -10,5 +10,6 @@ type MsBook struct {
 	Year      int    `json:"Year"`
 	Abstract  string `json:"Abstract"`
 	Stock     int    `json:"Stock"`
+	Photo     string `json:"Photo"`
 	Stsrc     string `json:"Stsrc"`
 }

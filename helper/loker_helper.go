@@ -30,3 +30,23 @@ func GetAllLokerDataBySessionID(c *gin.Context, sessionID int) ([]*model.MsLoker
 
 	return lokers, nil
 }
+
+func GetLokerDataByMultipleSessionID(c *gin.Context, sessionIDs []int) ([]*model.MsLoker, error) {
+	db := database.GlobalDB
+
+	var lokers []*model.MsLoker
+
+	// Construct the query to exclude bookings for the given session IDs
+	query := db.Table("ms_lokers").
+		Where("availability = ?", "Active").
+		Where("loker_id NOT IN (?)",
+			db.Table("tr_bookings").Select("DISTINCT loker_id").Where("session_id IN (?)", sessionIDs))
+
+	// Execute the query
+	err := query.Scan(&lokers).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return lokers, nil
+}
