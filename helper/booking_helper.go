@@ -445,3 +445,41 @@ func GetCheckInStatus(c *gin.Context, reqBody model.CheckBookingStatusRequestDTO
 
 	return isCheckedIn, nil
 }
+
+func GetBookingDataByID(c *gin.Context, bookingID string) (model.TrBooking, error) {
+	db := database.GlobalDB
+
+	var booking model.TrBooking
+
+	if err := db.Where("booking_id = ?", bookingID).First(&booking).Error; err != nil {
+		return booking, err
+	}
+
+	return booking, nil
+}
+
+func DeleteExpiredBookings(c *gin.Context, bookingId string) error {
+	db := database.GlobalDB
+
+	var bookings, err = GetBookingDataByID(c, bookingId)
+	if err != nil {
+		return err
+	}
+	now := time.Now()
+
+	db.Where("booking_status_id = ?", 3).Find(&bookings)
+
+	var session model.MsSession
+
+	if err := db.First(&session, bookings.SessionID).Error; err != nil {
+		return err
+	}
+
+	if session.EndSession.Before(now) {
+		if err := db.Model(&bookings).Update("Stsrc", "D").Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

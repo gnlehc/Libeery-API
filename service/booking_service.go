@@ -155,7 +155,7 @@ func CheckOutBookingHandler(c *gin.Context) {
 	})
 }
 
-func CheckBookingStatus(c *gin.Context) {
+func CheckBookingStatusHandler(c *gin.Context) {
 	var req model.CheckBookingStatusRequestDTO
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -177,6 +177,31 @@ func CheckBookingStatus(c *gin.Context) {
 		"isCheckedIn": isCheckedIn,
 	})
 }
+func DeleteExpiredBookingsHandler(c *gin.Context) {
+	bookingId := c.Query("id")
+	if err := helper.DeleteExpiredBookings(c, bookingId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to delete expired bookings",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Expired bookings deleted successfully",
+	})
+}
+
+func GetBookingByIDHandler(c *gin.Context) {
+	bookingID := c.Query("id")
+
+	booking, err := helper.GetBookingDataByID(c, bookingID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Booking not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, booking)
+}
 
 func BookingRoutes(private *gin.RouterGroup) {
 	private.GET("/bookings", BookingHandler)
@@ -185,5 +210,7 @@ func BookingRoutes(private *gin.RouterGroup) {
 	private.GET("/user-bookings/", GetUserBooking)
 	private.POST("/check-in", CheckInBookingHandler)
 	private.POST("/check-out", CheckOutBookingHandler)
-	private.POST("/check-booking-status", CheckBookingStatus)
+	private.POST("/check-booking-status", CheckBookingStatusHandler)
+	private.POST("/get-booking-by-id", GetBookingByIDHandler)
+	private.POST("/delete-expired-booking", DeleteExpiredBookingsHandler)
 }
