@@ -414,3 +414,34 @@ func CheckOutBooking(c *gin.Context, reqBody model.CheckInOutBookingRequestDTO) 
 
 	return nil
 }
+
+func GetCheckInStatus(c *gin.Context, reqBody model.CheckBookingStatusRequestDTO) (bool, error) {
+	db := database.GlobalDB
+	var isCheckedIn bool
+
+	userIDUUID, err := uuid.Parse(reqBody.UserID)
+	if err != nil {
+		return false, err
+	}
+
+	bookingIDUUID, err := uuid.Parse(reqBody.BookingID)
+	if err != nil {
+		return false, err
+	}
+
+	var booking model.TrBooking
+	if err := db.Where("user_id = ? AND booking_id = ?", userIDUUID, bookingIDUUID).First(&booking).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+
+	if booking.BookingStatusID == 2 {
+		isCheckedIn = true
+	} else {
+		isCheckedIn = false
+	}
+
+	return isCheckedIn, nil
+}

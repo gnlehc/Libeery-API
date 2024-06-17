@@ -155,6 +155,29 @@ func CheckOutBookingHandler(c *gin.Context) {
 	})
 }
 
+func CheckBookingStatus(c *gin.Context) {
+	var req model.CheckBookingStatusRequestDTO
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid request payload",
+		})
+		return
+	}
+
+	isCheckedIn, err := helper.GetCheckInStatus(c, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to get booking status",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"isCheckedIn": isCheckedIn,
+	})
+}
+
 func BookingRoutes(private *gin.RouterGroup) {
 	private.GET("/bookings", BookingHandler)
 	private.POST("/bookSession", BookASessionHandler)
@@ -162,4 +185,5 @@ func BookingRoutes(private *gin.RouterGroup) {
 	private.GET("/user-bookings/", GetUserBooking)
 	private.POST("/check-in", CheckInBookingHandler)
 	private.POST("/check-out", CheckOutBookingHandler)
+	private.POST("/check-booking-status", CheckBookingStatus)
 }

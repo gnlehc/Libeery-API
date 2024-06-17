@@ -39,3 +39,9 @@ type CheckInOutBookingRequestDTO struct {
 	UserID    string `json:"UserID"`
 	BookingID string `json:"BookingID"`
 }
+
+type CheckBookingStatusRequestDTO struct {
+	UserID          string `json:"UserID"`
+	BookingID       string `json:"BookingID"`
+	BookingStatusID int    `json:"BookingStatusID"`
+}
